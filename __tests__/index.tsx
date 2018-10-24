@@ -10,7 +10,7 @@ describe('Rebatch', () => {
       });
     }
     
-    const load = rebatch((keys: string[]) => {
+    const load = rebatch<string>((keys: string[]) => {
       return fetchIds(keys);
     });
 

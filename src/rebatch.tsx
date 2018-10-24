@@ -1,10 +1,10 @@
-export type BatchingFunction = (keys: any[]) => Promise<any[]>;
-export type Loader = (key: any) => Promise<any>;
+export type BatchingFunction<V> = (keys: any[]) => Promise<V[]>;
+export type Loader<V> = (key: any) => Promise<V>;
 export interface BatchingOptions {
   maxSize?: number;
 }
 
-export const rebatch = (batchingFn: BatchingFunction, options?: BatchingOptions): Loader => {
+export function rebatch<V>(batchingFn: BatchingFunction<V>, options?: BatchingOptions): Loader<V> {
   let keysMap = {};
 
   return (key) => {
