@@ -4,29 +4,50 @@ export interface BatchingOptions {
   maxSize?: number;
 }
 
+export interface CacheEntry<V> {
+  promise: Promise<V>;
+  resolver: Function; // TODO: improve typing
+}
+
 export function batchinator<V>(batchingFn: BatchingFunction<V>, options?: BatchingOptions): Loader<V> {
-  let keysMap = {};
+  let cache: {[key: string]: CacheEntry<V>} = {};
 
   return (key) => {
-    if (!Object.keys(keysMap).length) {
+    if (!Object.keys(cache).length) {
       setImmediate(async () => {
-        const keys = Object.keys(keysMap);
+        const keys = Object.keys(cache);
         const results = await batchingFn(keys);
         
         keys.forEach((key, index) => {
-          const resolver = keysMap[key];
+          if (!cache[key]) {return};
+          const resolver = cache[key].resolver;
           
-          if (resolver) {
-            resolver(results[index]);
-          }
+          resolver(results[index]);
         });
 
-        keysMap = {};
+        cache = {};
       });
     }
 
-    return new Promise(resolve => {
-      keysMap[key] = resolve;
+    if (cache[key]) {
+      return cache[key].promise;
+    } else {
+      cache[key] = createCacheEntry<V>();
+    }
+
+    const promise = new Promise<V>(resolve => {
+      cache[key].resolver = resolve;
     });
+
+    cache[key].promise = promise;
+
+    return promise;
   };
 };
+
+function createCacheEntry<V> (): CacheEntry<V> {
+  return {
+    promise: Promise.resolve() as any,
+    resolver() {}
+  };
+}

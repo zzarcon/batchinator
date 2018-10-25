@@ -36,4 +36,23 @@ describe('Batchinator', () => {
 
     expect(batchingFn).toBeCalledTimes(2);
   });
+
+  it.skip('should return the same result for the same key', async () => {
+    const batchingFn = jest.fn().mockReturnValue(Promise.resolve(['one', 'two']));
+    const load = batchinator(batchingFn);
+
+    console.log(await load(1))
+    console.log(await load(2))
+    expect(await load(1)).toEqual(await load(1))
+    expect(await load(2)).toEqual(await load(2))
+    expect(await load(1)).not.toEqual(await load(2));
+  });
+
+  it('should return same promise for same key', () => {
+    const batchingFn = jest.fn().mockReturnValue(Promise.resolve([]));
+    const load = batchinator(batchingFn);
+
+    expect(load(1) === load(1)).toBeTruthy();
+    expect(load(1) !== load(2)).toBeTruthy();
+  });
 });
