@@ -6,7 +6,7 @@ export interface BatchingOptions {
 
 export interface CacheEntry<V> {
   promise: Promise<V>;
-  resolver: (V) => void;
+  resolver: (value: V) => void;
 }
 
 export function batchinator<V>(batchingFn: BatchingFunction<V>, options?: BatchingOptions): Loader<V> {
