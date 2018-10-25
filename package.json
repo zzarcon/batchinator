@@ -1,9 +1,9 @@
 {
-  "name": "rebatch",
+  "name": "batchinator",
   "version": "0.0.1",
   "description": "Group calls within the same tick",
   "main": "dist/es5/index.js",
-  "repository": "https://github.com/zzarcon/rebatch",
+  "repository": "https://github.com/zzarcon/batchinator",
   "author": "Hector Leon Zarco Garcia <hezarco@gmail.com>",
   "license": "MIT",
   "devDependencies": {

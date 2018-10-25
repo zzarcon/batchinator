@@ -1,19 +1,19 @@
-# rebatch
+# batchinator
 > Group method calls within the same tick
 
 
 # Install
 
 ```
-$ yarn add rebatch
+$ yarn add batchinator
 ```
 
 # Usage
 
 ```typescript
-import rebatch from 'rebatch';
+import batchinator from 'batchinator';
 
-const load = rebatch((keys: string[]) => {
+const load = batchinator((keys: string[]) => {
   return new Promise<string[]>(resolve => {
     const newIds = ids.map(id => `${id}-foo`);
 

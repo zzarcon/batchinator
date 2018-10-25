@@ -4,7 +4,7 @@ export interface BatchingOptions {
   maxSize?: number;
 }
 
-export function rebatch<V>(batchingFn: BatchingFunction<V>, options?: BatchingOptions): Loader<V> {
+export function batchinator<V>(batchingFn: BatchingFunction<V>, options?: BatchingOptions): Loader<V> {
   let keysMap = {};
 
   return (key) => {

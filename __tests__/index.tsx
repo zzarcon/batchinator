@@ -1,6 +1,6 @@
-import { rebatch } from "../src";
+import { batchinator } from "../src";
 
-describe('Rebatch', () => {
+describe('Batchinator', () => {
   it('Should return right value per key', async () => {
     const fetchIds = (ids: string[]): Promise<string[]> => {
       return new Promise<string[]>(resolve => {
@@ -10,7 +10,7 @@ describe('Rebatch', () => {
       });
     }
     
-    const load = rebatch<string>((keys: string[]) => {
+    const load = batchinator<string>((keys: string[]) => {
       return fetchIds(keys);
     });
 
@@ -22,7 +22,7 @@ describe('Rebatch', () => {
 
   it('Should group calls to batching function', async () => {
     const batchingFn = jest.fn().mockReturnValue(Promise.resolve([]));
-    const load = rebatch(batchingFn);
+    const load = batchinator(batchingFn);
 
     expect(batchingFn).toBeCalledTimes(0);
     load(1);

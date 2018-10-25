@@ -1,2 +1,2 @@
-export * from './rebatch';
-export {rebatch as default} from './rebatch';
+export * from './batchinator';
+export {batchinator as default} from './batchinator';
