@@ -10,7 +10,7 @@ describe('Batchinator', () => {
       });
     }
     
-    const load = batchinator<string>((keys: string[]) => {
+    const load = batchinator<string, string>((keys: string[]) => {
       return fetchIds(keys);
     });
 

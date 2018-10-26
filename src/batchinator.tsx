@@ -1,5 +1,5 @@
-export type BatchingFunction<V> = (keys: any[]) => Promise<V[]>;
-export type Loader<V> = (key: any) => Promise<V>;
+export type BatchingFunction<K, V> = (keys: K[]) => Promise<V[]>;
+export type Loader<K, V> = (key: K) => Promise<V>;
 export interface BatchingOptions {
   maxSize?: number;
 }
@@ -9,37 +9,37 @@ export interface CacheEntry<V> {
   resolver: (value: V) => void;
 }
 
-export function batchinator<V>(batchingFn: BatchingFunction<V>, options?: BatchingOptions): Loader<V> {
-  let cache: {[key: string]: CacheEntry<V>} = {};
+export function batchinator<K, V>(batchingFn: BatchingFunction<K, V>, options?: BatchingOptions): Loader<K, V> {
+  const cache = new Map<K, CacheEntry<V>>();
 
   return (key) => {
     if (!Object.keys(cache).length) {
       setImmediate(async () => {
-        const keys = Object.keys(cache);
+        const keys = [...cache.keys()];
         const results = await batchingFn(keys);
         
         keys.forEach((key, index) => {
-          if (!cache[key]) {return};
-          const resolver = cache[key].resolver;
+          if (!cache.has(key)) {return};
+          const resolver = cache.get(key).resolver;
           
           resolver(results[index]);
         });
 
-        cache = {};
+        cache.clear();
       });
     }
 
-    if (cache[key]) {
-      return cache[key].promise;
+    if (cache.has(key)) {
+      return cache.get(key).promise;
     } else {
-      cache[key] = createCacheEntry<V>();
+      cache.set(key, createCacheEntry<V>());
     }
 
     const promise = new Promise<V>(resolve => {
-      cache[key].resolver = resolve;
+      cache.get(key).resolver = resolve;
     });
 
-    cache[key].promise = promise;
+    cache.get(key).promise = promise;
 
     return promise;
   };
